@@ -7,12 +7,12 @@ import { useSelector, useDispatch } from 'react-redux'
 const UsersList = () => {
   const dispatch = useDispatch()
 
-  useEffect(() => {
-    dispatch(fetchUsers())
-  }, [dispatch])
-
   // providing a list of users as an array instead of an object for the sake of making use of array methods
   const users = useSelector(state => Object.values(state.users))
+
+  useEffect(() => {
+    dispatch(fetchUsers())
+  }, [dispatch, users])
 
   const renderUsers = users => {
     return (
@@ -58,6 +58,17 @@ const UsersList = () => {
     )
   }
 
+  if (!users[0]) {
+    return (
+      <div className='d-flex justify-content-center  mt-4'>
+        <div
+          className='spinner-border text-primary'
+          style={{ width: '6rem', height: '6rem' }}
+          role='status'
+        ></div>
+      </div>
+    )
+  }
   return <div className='container mt-3 col-sm-8'>{renderUsers(users)}</div>
 }
 
