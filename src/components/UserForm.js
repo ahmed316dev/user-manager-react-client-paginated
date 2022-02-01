@@ -213,6 +213,7 @@ const UserForm = props => {
                 <div className='col-auto'>
                   {isUpdate ? (
                     <button
+                      type='button'
                       onClick={() => dispatch(deleteUser(currentId, navigate))}
                       className='btn btn-danger '
                     >
