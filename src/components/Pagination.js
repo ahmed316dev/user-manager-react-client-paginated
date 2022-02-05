@@ -1,9 +1,6 @@
 import React, { useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import {
-  getCount,
-  setCurrentPage,
-} from '../redux/Pagination/pagination.actions'
+import { setCurrentPage } from '../redux/Pagination/pagination.actions'
 import { fetchUsers } from '../redux/Users/users.actions'
 
 const Pagination = () => {

@@ -6,7 +6,7 @@ import { Form, Field } from 'react-final-form'
 import {
   createUser,
   updateUser,
-  fetchUsers,
+  // fetchUsers,
   deleteUser,
 } from '../redux/Users/users.actions'
 import { isEmailUnique } from '../redux/Validation/validation.actions'
