@@ -1,34 +1,34 @@
 import { FETCH_USERS, DELETE_USER } from './users.types'
 
-import users from '../../apis/users'
+import api from '../../apis/api'
 
 export const createUser = (formValues, navigate) => async dispatch => {
   if (formValues === { name: '', email: '', phone: '', address: '' }) return
 
-  await users.post('/users', formValues)
+  await api.post('/users', formValues)
 
   navigate('/')
 }
 
-export const fetchUsers = () => async dispatch => {
-  try {
-    const response = await users.get('/users')
-
-    dispatch({
-      type: FETCH_USERS,
-      payload: Object.entries(response.data).reduce(
-        (p, [k, v]) => ({ ...p, [v._id]: v }),
-        {}
-      ),
-    })
-  } catch (error) {
-    console.log(error)
+export const fetchUsers =
+  (limit = 5, currentPage = 1) =>
+  async dispatch => {
+    try {
+      const response = await api.get(
+        `users?limit=${limit}&currentPage=${currentPage}`
+      )
+      dispatch({
+        type: FETCH_USERS,
+        payload: response.data,
+      })
+    } catch (error) {
+      console.log(error)
+    }
   }
-}
 
 export const updateUser = (formValues, userId, navigate) => async dispatch => {
   try {
-    await users.patch(`/users/${userId}`, formValues)
+    await api.patch(`/users/${userId}`, formValues)
     // navigate is called here instead of in the submit handling function for the purpose of programmatically navigating admin back to Home only if the POST request goes throguh
 
     navigate('/')
@@ -40,8 +40,7 @@ export const updateUser = (formValues, userId, navigate) => async dispatch => {
 export const deleteUser = (userId, navigate = null) => {
   try {
     // users.delete('/delete.php', { data: userId })
-    const deleted = users.delete(`/users/${userId}`)
-    console.log(deleted)
+    const deleted = api.delete(`/users/${userId}`)
     // navigate is called here instead of in the submit handling function for the purpose of programmatically navigating admin back to Home only if the POST request goes throguh
     // if (navigate) setTimeout(() => navigate('/'), 500)
     if (navigate && deleted) setTimeout(() => navigate('/'), 300)

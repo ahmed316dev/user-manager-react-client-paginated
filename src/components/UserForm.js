@@ -9,6 +9,7 @@ import {
   fetchUsers,
   deleteUser,
 } from '../redux/Users/users.actions'
+import { isEmailUnique } from '../redux/Validation/validation.actions'
 
 const UserForm = props => {
   const { currentId } = props
@@ -16,16 +17,16 @@ const UserForm = props => {
   const navigate = useNavigate()
 
   useEffect(() => {
-    dispatch(fetchUsers())
+    // dispatch(fetchUsers())
   }, [dispatch])
 
-  const users = useSelector(state => state.users)
+  const { users } = useSelector(state => state)
 
   // checking if admin is trying to create a new user or update an existing one
-  const isUpdate = Object.values(users).find(user => user._id === currentId)
+  const isUpdate = users.find(user => user._id === currentId)
 
   // grabs all the data from the user admin is trying to update
-  const userToEdit = Object.values(users).find(user => user._id === currentId)
+  const userToEdit = users.find(user => user._id === currentId)
 
   // Dispatching actions depending on whether the admin is creating a user or updating an existing one
   const onSubmit = formValues => {
@@ -37,10 +38,13 @@ const UserForm = props => {
   const validate = ({ name, email, phone, address }) => {
     const error = {}
 
+    dispatch(isEmailUnique(email))
+
     const emailExists = email =>
-      !isUpdate && Object.values(users).find(user => user.email === email)
+      !isUpdate && users.find(user => user.email === email)
+
     const phoneExists = phone =>
-      !isUpdate && Object.values(users).find(user => user.phone === phone)
+      !isUpdate && users.find(user => user.phone === phone)
     const emailIsValid = email =>
       /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/.test(
         email
@@ -48,21 +52,15 @@ const UserForm = props => {
     const phoneIsValid = phone =>
       /^\D*(\d\D*){6,15}$/.test(phone) ? true : false
 
-    const usersWithoutCurrentUsers = Object.values(users).filter(
+    const usersWithoutCurrentUsers = users.filter(
       user => user._id !== currentId
     )
 
     // checks if admin has provided email/phone that don't belong to another user
     const editToUniqueEmail = email =>
-      isUpdate &&
-      !Object.values(usersWithoutCurrentUsers).find(
-        user => user.email === email
-      )
+      isUpdate && !usersWithoutCurrentUsers.find(user => user.email === email)
     const editToUniquePhone = phone =>
-      isUpdate &&
-      !Object.values(usersWithoutCurrentUsers).find(
-        user => user.phone === phone
-      )
+      isUpdate && usersWithoutCurrentUsers.find(user => user.phone === phone)
 
     if (!name) error.name = 'You must enter a name'
     if (!email) error.email = 'You must enter an email'
@@ -82,7 +80,7 @@ const UserForm = props => {
   }
 
   return (
-    <div className='container col-sm-4 mt-3 '>
+    <div className="container col-sm-4 mt-3 ">
       <h1>{isUpdate ? 'Edit User' : 'Create User'}</h1>
 
       <Form
@@ -92,24 +90,24 @@ const UserForm = props => {
         render={({ handleSubmit }) => {
           return (
             <form onSubmit={handleSubmit}>
-              <div className='mb-3'>
-                <label htmlFor='name'>Name</label>
+              <div className="mb-3">
+                <label htmlFor="name">Name</label>
                 <Field
-                  name='name'
+                  name="name"
                   render={({ input, meta }) => {
                     return (
-                      <div className='input-group'>
-                        <span className='input-group-text'>
+                      <div className="input-group">
+                        <span className="bg-dark border-dark input-group-text">
                           {' '}
-                          <i className='bi bi-person-fill'></i>
+                          <i className="text-muted bi  bi-person-fill"></i>
                         </span>
                         <input
-                          className='form-control'
+                          className="bg-dark border-dark form-control text-white"
                           {...input}
-                          placeholder='Enter Name'
-                          id='name'
+                          placeholder="Enter Name"
+                          id="name"
                         />
-                        <span className='invalid-feedback d-block'>
+                        <span className="invalid-feedback d-block">
                           {' '}
                           {meta.error && meta.touched ? meta.error : ''}
                         </span>
@@ -119,53 +117,25 @@ const UserForm = props => {
                 />
               </div>
 
-              <div className='mb-3'>
-                <label htmlFor='email'>Email</label>
+              <div className="mb-3">
+                <label htmlFor="email">Email</label>
                 <Field
-                  name='email'
+                  name="email"
                   render={({ input, meta }) => {
                     return (
-                      <div className='input-group'>
-                        <span className='input-group-text'>
+                      <div className="input-group">
+                        <span className="bg-dark border-dark input-group-text">
                           {' '}
-                          <i className='bi bi-envelope-fill'></i>
+                          <i className="text-muted bi  bi-envelope-fill"></i>
                         </span>
                         <input
-                          className='form-control'
+                          className="bg-dark border-dark form-control text-white"
                           {...input}
-                          placeholder='Enter Email'
-                          id='email'
-                        />
-                        {/* rendering error */}
-                        <span className='invalid-feedback d-block'>
-                          {' '}
-                          {meta.error && meta.touched ? meta.error : ''}
-                        </span>
-                      </div>
-                    )
-                  }}
-                />
-              </div>
-
-              <div className='mb-3'>
-                <label htmlFor='phone'>Phone</label>
-                <Field
-                  name='phone'
-                  render={({ input, meta }) => {
-                    return (
-                      <div className='input-group'>
-                        <span className='input-group-text'>
-                          {' '}
-                          <i className='bi bi-telephone-inbound-fill'></i>
-                        </span>
-                        <input
-                          className='form-control'
-                          {...input}
-                          placeholder='Enter Phone'
-                          id='phone'
+                          placeholder="Enter Email"
+                          id="email"
                         />
                         {/* rendering error */}
-                        <span className='invalid-feedback d-block'>
+                        <span className="invalid-feedback d-block">
                           {' '}
                           {meta.error && meta.touched ? meta.error : ''}
                         </span>
@@ -175,25 +145,25 @@ const UserForm = props => {
                 />
               </div>
 
-              <div className='mb-3'>
-                <label htmlFor='address'>Address</label>
+              <div className="mb-3">
+                <label htmlFor="phone">Phone</label>
                 <Field
-                  name='address'
+                  name="phone"
                   render={({ input, meta }) => {
                     return (
-                      <div className='input-group'>
-                        <span className='input-group-text'>
+                      <div className="input-group">
+                        <span className="bg-dark border-dark input-group-text">
                           {' '}
-                          <i className='bi bi-house-fill'></i>
+                          <i className="text-muted bi  bi-telephone-inbound-fill"></i>
                         </span>
                         <input
-                          className='form-control'
+                          className="bg-dark border-dark form-control text-white"
                           {...input}
-                          placeholder='Enter Address'
-                          id='address'
+                          placeholder="Enter Phone"
+                          id="phone"
                         />
                         {/* rendering error */}
-                        <span className='invalid-feedback d-block'>
+                        <span className="invalid-feedback d-block">
                           {' '}
                           {meta.error && meta.touched ? meta.error : ''}
                         </span>
@@ -203,19 +173,47 @@ const UserForm = props => {
                 />
               </div>
 
-              <div className='d-flex justify-content-between'>
-                <div className='col-auto'>
-                  <button type='submit' className='btn btn-primary mb-3'>
+              <div className="mb-3">
+                <label htmlFor="address">Address</label>
+                <Field
+                  name="address"
+                  render={({ input, meta }) => {
+                    return (
+                      <div className="input-group">
+                        <span className="bg-dark border-dark input-group-text">
+                          {' '}
+                          <i className="text-muted bi  bi-house-fill"></i>
+                        </span>
+                        <input
+                          className="bg-dark border-dark form-control text-white"
+                          {...input}
+                          placeholder="Enter Address"
+                          id="address"
+                        />
+                        {/* rendering error */}
+                        <span className="invalid-feedback d-block">
+                          {' '}
+                          {meta.error && meta.touched ? meta.error : ''}
+                        </span>
+                      </div>
+                    )
+                  }}
+                />
+              </div>
+
+              <div className="d-flex justify-content-between">
+                <div className="col-auto">
+                  <button type="submit" className="btn btn-primary mb-3">
                     {isUpdate ? 'Edit User' : 'Create User'}
                   </button>
                 </div>
 
-                <div className='col-auto'>
+                <div className="col-auto">
                   {isUpdate ? (
                     <button
-                      type='button'
+                      type="button"
                       onClick={() => dispatch(deleteUser(currentId, navigate))}
-                      className='btn btn-danger '
+                      className="btn btn-danger "
                     >
                       Delete User
                     </button>

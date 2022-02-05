@@ -1,0 +1,2 @@
+export const IS_EMAIL_UNIQUE = 'IS_EMAIL_UNIQUE'
+export const IS_PHONE_UNIQUE = 'IS_PHONE_UNIQUE'
