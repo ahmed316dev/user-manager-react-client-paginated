@@ -1,4 +1,4 @@
-import { IS_EMAIL_UNIQUE, IS_USER_UPDATE } from './validation.types'
+import { IS_EMAIL_UNIQUE } from './validation.types'
 import { IS_PHONE_UNIQUE } from './validation.types'
 import api from '../../apis/api'
 

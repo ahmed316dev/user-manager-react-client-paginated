@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback } from 'react'
+import React, { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import { Form, Field } from 'react-final-form'
@@ -12,7 +12,7 @@ import {
 } from '../redux/Users/users.actions'
 import {
   isEmailUnique as isEmailUniqueAction,
-  isPhoneUnique as isPhoneUniqueAction,
+  // isPhoneUnique as isPhoneUniqueAction,
 } from '../redux/Validation/validation.actions'
 
 const UserForm = props => {
