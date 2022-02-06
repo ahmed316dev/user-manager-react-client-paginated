@@ -1,4 +1,4 @@
-import { FETCH_USERS, DELETE_USER } from './users.types'
+import { FETCH_USERS, DELETE_USER, USER_TO_EDIT } from './users.types'
 
 import api from '../../apis/api'
 
@@ -52,4 +52,13 @@ export const deleteUser = (userId, navigate = null) => {
   } catch (error) {
     console.log(error)
   }
+}
+
+export const userToEdit = userId => async dispatch => {
+  const response = await api.get(`/users/user/${userId}`)
+
+  dispatch({
+    type: USER_TO_EDIT,
+    payload: response.data,
+  })
 }

@@ -1,4 +1,4 @@
-import { FETCH_USERS, DELETE_USER } from './users.types'
+import { FETCH_USERS, DELETE_USER, USER_TO_EDIT } from './users.types'
 
 const usersReducer = (state = {}, action) => {
   switch (action.type) {
@@ -9,7 +9,9 @@ const usersReducer = (state = {}, action) => {
     case DELETE_USER:
       const filteredUsers = state.filter(user => user._id !== action.payload)
       return [...filteredUsers]
-
+      
+    case USER_TO_EDIT:
+      return { userToEdit: action.payload[0] }
     default:
       return state
   }

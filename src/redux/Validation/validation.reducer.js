@@ -1,12 +1,13 @@
-import { IS_EMAIL_UNIQUE } from './validation.types'
+import { IS_EMAIL_UNIQUE, IS_USER_UPDATE } from './validation.types'
 import { IS_PHONE_UNIQUE } from './validation.types'
 
 const validationReducer = (state = {}, action) => {
   switch (action.type) {
     case IS_EMAIL_UNIQUE:
-      return { ...state, ...action.payload }
+      return { ...state, isEmailUnique: action.payload }
     case IS_PHONE_UNIQUE:
-      return { ...state, ...action.payload }
+      return { ...state, isPhoneUnique: action.payload }
+
     default:
       return state
   }
