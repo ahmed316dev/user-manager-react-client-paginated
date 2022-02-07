@@ -1,3 +1,5 @@
 export const GET_COUNT = 'GET_COUNT'
 export const SET_LIMIT = 'SET_LIMIT'
 export const SET_CURRENT_PAGE = 'SET_CURRENT_PAGE'
+export const SET_PAGES_START_INDEX = 'SET_PAGES_START_INDEX'
+export const SET_PAGES_END_INDEX = 'SET_PAGES_END_INDEX'

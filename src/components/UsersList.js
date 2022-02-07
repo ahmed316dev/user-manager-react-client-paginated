@@ -81,11 +81,7 @@ const UsersList = () => {
       <DropdownMenu />
       {`${count} users`}
       {renderUsers(users)}
-      <Pagination
-      // pages={pages}
-      // isActive={isActive}
-      // changePageHandler={changePageHandler}
-      />{' '}
+      <Pagination />
     </div>
   )
 }

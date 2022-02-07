@@ -12,7 +12,7 @@ import {
 } from '../redux/Users/users.actions'
 import {
   isEmailUnique as isEmailUniqueAction,
-  // isPhoneUnique as isPhoneUniqueAction,
+  isPhoneUnique as isPhoneUniqueAction,
 } from '../redux/Validation/validation.actions'
 
 const UserForm = props => {
@@ -20,48 +20,68 @@ const UserForm = props => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
 
-  useEffect(()=>{
+  useEffect(() => {
     if (currentId) dispatch(userToEditAction(currentId))
-    
   }, [dispatch, currentId])
-  
-  const {userToEdit} = useSelector(state => state.users)
 
-  // THIS CAUSES "IS_EMAIL_UNIQUE" TO DISPATCH NON-stop
-  // const {isEmailUnique} = useSelector(state => state.validation)
+  const userToEdit = useSelector(state => state.users.userToEdit)
+
+  const isEmailUnique = useSelector(state => state.validation.isEmailUnique)
+  const isPhoneUnique = useSelector(state => state.validation.isPhoneUnique)
   // checking if admin is trying to create a new user or update an existing one
 
   // grabs all the data from the user admin is trying to update
   // const userToEdit = users.find(user => user._id === currentId)
   // Dispatching actions depending on whether the admin is creating a user or updating an existing one
   const onSubmit = formValues => {
-    if (userToEdit) dispatch(updateUser(formValues, currentId, navigate))
-    else if (!userToEdit) dispatch(createUser(formValues, navigate))
+    if (currentId) dispatch(updateUser(formValues, currentId, navigate))
+    else if (!currentId) dispatch(createUser(formValues, navigate))
   }
 
-  const validate = ({name, email, phone, address}) =>{
-    const error = { }
-    dispatch(isEmailUniqueAction("sodyzeq@mailinator.com"))
+  const validate = async ({ name, email, phone, address }) => {
+    const error = {}
+    dispatch(isEmailUniqueAction(email))
+    dispatch(isPhoneUniqueAction(phone))
 
-    if(! name) error.name= "You must enter a name"
-    if(! email) error.email= "You must enter an email"
-    if(! phone) error.phone= "You must enter a phone"
-    if(! address) error.address= "You must enter an address"
-    // if()
+    const validEmailRegEx =
+      /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i
+
+    const validPhoneRegEx =
+      /(\+\d{1,3}\s?)?((\(\d{2,3}\)\s?)|(\d{4})(\s|-?))(\d{3}(\s|-?))(\d{4})(\s?(([E|e]xt[:|.|]?)|x|X)(\s?\d+))?/g
+
+    const emailIsValid = validEmailRegEx.test(email)
+
+    const phoneIsValid = validPhoneRegEx.test(phone)
+
+    if (!name) error.name = 'You must enter a name'
+    if (!email) error.email = 'You must enter an email'
+    if (!emailIsValid && email) error.email = 'You must enter a valid email'
+    if (
+      (!isEmailUnique && email !== userToEdit?.email) ||
+      (!isEmailUnique && !currentId)
+    )
+      error.email = ' You must enter a unique email'
+
+    if (!phone) error.phone = 'You must enter a phone'
+    if (!phoneIsValid && phone) error.phone = 'You must enter a valid phone'
+    if (
+      (!isPhoneUnique && phone !== userToEdit?.phone) ||
+      !isPhoneUnique & !currentId
+    )
+      error.phone = ' You must enter a unique phone'
+    if (!address) error.address = 'You must enter an address'
 
     return error
   }
- 
 
   return (
     <div className="container col-sm-4 mt-3 ">
-      <h1>{userToEdit ? 'Edit User' : 'Create User'}</h1>
+      <h1>{currentId ? 'Edit User' : 'Create User'}</h1>
 
       <Form
-        initialValues={userToEdit}
+        initialValues={currentId ? userToEdit : {}}
         validate={validate}
         onSubmit={onSubmit}
-        
         render={({ handleSubmit }) => {
           return (
             <form onSubmit={handleSubmit}>
@@ -179,12 +199,12 @@ const UserForm = props => {
               <div className="d-flex justify-content-between">
                 <div className="col-auto">
                   <button type="submit" className="btn btn-primary mb-3">
-                    {userToEdit ? 'Edit User' : 'Create User'}
+                    {currentId ? 'Edit User' : 'Create User'}
                   </button>
                 </div>
 
                 <div className="col-auto">
-                  {userToEdit ? (
+                  {currentId ? (
                     <button
                       type="button"
                       onClick={() => dispatch(deleteUser(currentId, navigate))}
