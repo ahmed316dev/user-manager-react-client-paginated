@@ -60,7 +60,7 @@ const Pagination = () => {
   const pagesSliced = pages.slice(pageStartIndex, pageEndIndex)
   const renderPages = () => {
     return pagesSliced.map(page => {
-      if (page === 1 || page === numberOfPages) return
+      if (page === 1 || page === numberOfPages) return null
       return (
         <li key={page} className={`page-item`}>
           <button
