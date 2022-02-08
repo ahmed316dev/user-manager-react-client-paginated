@@ -59,7 +59,6 @@ export const deleteUser = (userId, navigate = null) => {
     // navigate is called here instead of in the submit handling function for the purpose of programmatically navigating admin back to Home only if the POST request goes throguh
     // if (navigate) setTimeout(() => navigate('/'), 500)
     if (navigate && deleted) setTimeout(() => navigate('/'), 300)
-    console.log(userId)
     return {
       type: DELETE_USER,
       payload: userId,
