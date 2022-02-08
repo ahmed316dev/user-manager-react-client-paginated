@@ -11,11 +11,17 @@ export const createUser = (formValues, navigate) => async dispatch => {
 }
 
 export const fetchUsers =
-  (limit = 5, currentPage = 1) =>
+  (
+    limit = 5,
+    currentPage = 1,
+    searchText = '',
+    byName = true,
+    byEmail = false
+  ) =>
   async dispatch => {
     try {
       const response = await api.get(
-        `users?limit=${limit}&currentPage=${currentPage}`
+        `users?searchText=${searchText}&limit=${limit}&currentPage=${currentPage}&byName=${byName}&byEmail=${byEmail}`
       )
       dispatch({
         type: FETCH_USERS,
@@ -26,6 +32,15 @@ export const fetchUsers =
     }
   }
 
+// export const fetchUsersBySearch =
+//   ({ limit, currentPage, searchText, searchBy: { name, email } }) =>
+//   async dispatch => {
+//     const response = await api.get(
+//       `/users/fetchusersbysearch?searchText=${searchText}&limit=${limit}&currentPage=${currentPage}&name=${name}&email=${email}`
+//     )
+
+//     dispatch({ type: FETCH_USERS, payload: response.data })
+//   }
 export const updateUser = (formValues, userId, navigate) => async dispatch => {
   try {
     await api.patch(`/users/${userId}`, formValues)
@@ -44,7 +59,7 @@ export const deleteUser = (userId, navigate = null) => {
     // navigate is called here instead of in the submit handling function for the purpose of programmatically navigating admin back to Home only if the POST request goes throguh
     // if (navigate) setTimeout(() => navigate('/'), 500)
     if (navigate && deleted) setTimeout(() => navigate('/'), 300)
-
+    console.log(userId)
     return {
       type: DELETE_USER,
       payload: userId,

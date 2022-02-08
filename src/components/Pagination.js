@@ -5,20 +5,15 @@ import {
   setPageStartIndex,
   setPageEndIndex,
 } from '../redux/Pagination/pagination.actions'
-import { fetchUsers } from '../redux/Users/users.actions'
 
 const Pagination = () => {
   const dispatch = useDispatch()
-  const { count, limit, currentPage } = useSelector(state => state.pagination)
-
+  const { limit, currentPage } = useSelector(state => state.pagination)
+  const { count } = useSelector(state => state.users)
   const { pageStartIndex, pageEndIndex } = useSelector(
     state => state?.pagination
   )
   const numberOfPages = Math.ceil(count / limit)
-
-  useEffect(() => {
-    dispatch(fetchUsers(limit, currentPage))
-  }, [dispatch, currentPage, limit])
 
   useEffect(() => {
     dispatch(setCurrentPage(1))
@@ -79,8 +74,12 @@ const Pagination = () => {
   }
 
   return (
-    <nav aria-label="Page navigation example ">
-      <ul className="pagination justify-content-center">
+    <nav aria-label="Page navigation  example ">
+      <ul
+        className={`${
+          count <= limit ? 'd-none' : ''
+        } pagination justify-content-center`}
+      >
         {/* Previous button */}
         <li className={`page-item  ${currentPage <= 1 ? 'disabled' : ''}`}>
           <button

@@ -1,25 +1,38 @@
 import React, { useEffect } from 'react'
 import { fetchUsers, deleteUser } from '../redux/Users/users.actions'
-import { getCount } from '../redux/Pagination/pagination.actions'
 import { Link } from 'react-router-dom'
 
 import { useSelector, useDispatch } from 'react-redux'
 import Pagination from './Pagination'
-import DropdownMenu from './DropdownMenu'
+import ShowLimit from './ShowLimit'
+import SearchBar from './SearchBar'
+import { setCurrentPage } from '../redux/Pagination/pagination.actions'
 
 const UsersList = () => {
   const dispatch = useDispatch()
 
   // providing a list of users as an array instead of an object for the sake of making use of array methods
-  const users = useSelector(state => state.users)
-  const { count } = useSelector(state => state.pagination)
-  useEffect(() => {
-    dispatch(fetchUsers())
-  }, [dispatch])
+  const { users, count } = useSelector(state => state.users)
+
+  const { limit, currentPage } = useSelector(state => state.pagination)
+
+  const {
+    searchText,
+    searchBy: { byName, byEmail },
+  } = useSelector(state => state.search)
 
   useEffect(() => {
-    dispatch(getCount())
-  }, [dispatch, users])
+    if (!searchText) {
+      dispatch(fetchUsers(limit, currentPage))
+    }
+    if (searchText) {
+      dispatch(fetchUsers(limit, currentPage, searchText, byName, byEmail))
+    }
+  }, [dispatch, searchText, limit, currentPage, byName, byEmail])
+
+  useEffect(() => {
+    dispatch(setCurrentPage(1))
+  }, [dispatch, searchText])
 
   const renderUsers = users => {
     return (
@@ -43,18 +56,18 @@ const UsersList = () => {
                     <i className="bi bi-house-door-fill"></i> {user.address}
                   </h6>
                 </div>
-                <div className="d-grid gap-2 col-2 ">
+                <div className="d-flex flex-column align-items-between mt-3 gap-2  col-lg-2 col-3">
                   <Link
                     to={`/edit/${user._id}`}
-                    className=" btn-lg btn btn-primary"
+                    className=" p-1 m-0 btn btn-primary"
                   >
-                    Edit
+                    <i className=" bi bi-pencil-square"></i>
                   </Link>
                   <button
                     onClick={() => dispatch(deleteUser(user._id))}
-                    className="btn btn-danger "
+                    className="btn p-0 m-0 btn-danger "
                   >
-                    Delete
+                    <i className=" bi h5 bi-trash"></i>
                   </button>
                 </div>
               </div>
@@ -65,7 +78,7 @@ const UsersList = () => {
     )
   }
 
-  if (!users[0]) {
+  if (!users) {
     return (
       <div className="d-flex justify-content-center  mt-4">
         <div
@@ -77,8 +90,11 @@ const UsersList = () => {
     )
   }
   return (
-    <div className="container mt-3 col-sm-8">
-      <DropdownMenu />
+    <div className="container mt-3 ">
+      <div className="d-flex justify-content-between">
+        <SearchBar />
+        <ShowLimit />
+      </div>
       {`${count} users`}
       {renderUsers(users)}
       <Pagination />

@@ -1,5 +1,4 @@
 import {
-  GET_COUNT,
   SET_LIMIT,
   SET_CURRENT_PAGE,
   SET_PAGES_START_INDEX,
@@ -8,9 +7,6 @@ import {
 
 const paginationReducer = (state = { limit: 5, currentPage: 1 }, action) => {
   switch (action.type) {
-    case GET_COUNT:
-      return { ...state, count: action.payload }
-
     case SET_LIMIT:
       return { ...state, limit: action.payload }
 

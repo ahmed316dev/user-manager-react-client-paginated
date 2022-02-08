@@ -7,7 +7,7 @@ import EditUser from './EditUser'
 
 const App = () => {
   return (
-    <div className="text-white ">
+    <div className="text-white">
       <BrowserRouter>
         <Header />
         <Routes>
