@@ -1,6 +1,5 @@
 import axios from 'axios'
 
 export default axios.create({
-  baseURL: 'https://users-api-node.herokuapp.com/',
-  // baseURL: 'http://localhost:5000/',
+  baseURL: 'http://localhost/php_rest_users_paginatoin_query/api',
 })

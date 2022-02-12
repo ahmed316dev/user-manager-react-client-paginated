@@ -13,7 +13,7 @@ const usersReducer = (state = {}, action) => {
       return { count: state.count - 1, users: filteredUsers }
 
     case USER_TO_EDIT:
-      return { userToEdit: action.payload[0] }
+      return { userToEdit: action.payload }
     default:
       return state
   }

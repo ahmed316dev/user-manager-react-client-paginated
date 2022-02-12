@@ -5,7 +5,7 @@ import api from '../../apis/api'
 export const createUser = (formValues, navigate) => async dispatch => {
   if (formValues === { name: '', email: '', phone: '', address: '' }) return
 
-  await api.post('/users', formValues)
+  await api.post('/user/create.php', formValues)
 
   navigate('/')
 }
@@ -21,7 +21,7 @@ export const fetchUsers =
   async dispatch => {
     try {
       const response = await api.get(
-        `users?searchText=${searchText}&limit=${limit}&currentPage=${currentPage}&byName=${byName}&byEmail=${byEmail}`
+        `user/read.php?searchText=${searchText}&limit=${limit}&currentPage=${currentPage}&byName=${byName}&byEmail=${byEmail}`
       )
       dispatch({
         type: FETCH_USERS,
@@ -43,9 +43,8 @@ export const fetchUsers =
 //   }
 export const updateUser = (formValues, userId, navigate) => async dispatch => {
   try {
-    await api.patch(`/users/${userId}`, formValues)
+    const response = await api.put('user/update.php', { ...formValues, userId })
     // navigate is called here instead of in the submit handling function for the purpose of programmatically navigating admin back to Home only if the POST request goes throguh
-
     navigate('/')
   } catch (error) {
     console.log(error)
@@ -54,10 +53,8 @@ export const updateUser = (formValues, userId, navigate) => async dispatch => {
 
 export const deleteUser = (userId, navigate = null) => {
   try {
-    // users.delete('/delete.php', { data: userId })
-    const deleted = api.delete(`/users/${userId}`)
+    const deleted = api.delete('/user/delete.php', { data: { userId } })
     // navigate is called here instead of in the submit handling function for the purpose of programmatically navigating admin back to Home only if the POST request goes throguh
-    // if (navigate) setTimeout(() => navigate('/'), 500)
     if (navigate && deleted) setTimeout(() => navigate('/'), 300)
     return {
       type: DELETE_USER,
@@ -69,7 +66,7 @@ export const deleteUser = (userId, navigate = null) => {
 }
 
 export const userToEdit = userId => async dispatch => {
-  const response = await api.get(`/users/user/${userId}`)
+  const response = await api.get(`/user/read_single.php?userId=${userId}`)
 
   dispatch({
     type: USER_TO_EDIT,
